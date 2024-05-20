@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "formulahendry.auto-close-tag",
+    "redwan-hossain.auto-rename-tag-clone",
+    "vunguyentuan.vscode-postcss",
+    "csstools.postcss",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "jasonlhy.hungry-delete",
+    "moalamri.inline-fold",
+    "dbaeumer.vscode-eslint"
+  ]
+}
