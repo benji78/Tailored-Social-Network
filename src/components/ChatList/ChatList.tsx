@@ -1,7 +1,7 @@
 // src/components/ChatList.tsx
 import React, { useState, useEffect } from 'react'
 import supabase from '../../supabase'
-import { Message, User } from '../../types/Message'
+import { User } from '../../types/Message'
 
 interface ChatListProps {
   currentUser: User
