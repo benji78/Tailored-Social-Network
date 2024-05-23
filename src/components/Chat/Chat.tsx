@@ -61,6 +61,13 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
     }
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
   return (
     <div className="flex h-full flex-col">
       <div className="p-4">
@@ -85,6 +92,7 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Type your message"
           className="flex-1 rounded-lg border p-2 focus:border-blue-300 focus:outline-none focus:ring"
         />
