@@ -1,45 +1,37 @@
-// src/components/UserList.tsx
-import React, { useState, useEffect } from 'react';
-import supabase from '../../supabase';
-import { User } from '../../types/Message';
+import React, { useState, useEffect } from 'react'
+import supabase from '../../supabase'
+import { User } from '../../types/Message'
+import { ComboboxDemo } from '@/components/ComboBox/ComboBox'
 
 interface UserListProps {
-  onSelectUser: (user: User) => void;
-  currentUser: User;
+  onSelectUser: (user: User) => void
+  currentUser: User
 }
 
 const UserList: React.FC<UserListProps> = ({ onSelectUser, currentUser }) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers()
+  }, [])
 
   const fetchUsers = async () => {
-    const { data, error } = await supabase.from<any, any>('users2').select('*');
+    const { data, error } = await supabase.from('users2').select('*')
 
     if (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching users:', error)
     } else {
-      const filteredUsers = data?.filter((user: User) => user.id !== currentUser.id) || [];
-      setUsers(filteredUsers);
+      const filteredUsers = data?.filter((user: User) => user.id !== currentUser.id) || []
+      setUsers(filteredUsers)
     }
-  };
+  }
 
   return (
     <div className="p-4">
       <h2 className="mb-4 text-lg font-bold">Users</h2>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id} className="mb-2">
-            <button onClick={() => onSelectUser(user)} className="text-blue-500">
-              {user.username}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <ComboboxDemo users={users} onSelectUser={onSelectUser} />
     </div>
-  );
-};
+  )
+}
 
-export default UserList;
+export default UserList

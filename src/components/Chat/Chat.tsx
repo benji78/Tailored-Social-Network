@@ -2,10 +2,13 @@
 import React, { useState, useEffect } from 'react'
 import supabase from '../../supabase'
 import { Message } from '../../types/Message'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import ChatMessage from '../ChatMessage/ChatMessage'
 
 interface ChatProps {
   currentUser: { id: string }
-  otherUser: { id: string, username: string }
+  otherUser: { id: string; username: string }
 }
 
 const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
@@ -39,7 +42,7 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
       .select('*')
       .or(
         `and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUser.id}),` +
-        `and(sender_id.eq.${otherUser.id},receiver_id.eq.${currentUser.id})`
+          `and(sender_id.eq.${otherUser.id},receiver_id.eq.${currentUser.id})`
       )
       .order('created_at', { ascending: true })
 
@@ -63,8 +66,8 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
-      sendMessage();
+      e.preventDefault()
+      sendMessage()
     }
   }
 
@@ -74,31 +77,27 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
         <h2 className="text-lg font-bold">Chatting with {otherUser.username}</h2>
       </div>
       <div className="flex-1 overflow-y-auto p-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`my-2 rounded-lg p-2 ${
-              message.sender_id === currentUser.id
-                ? 'self-end bg-blue-500 text-white'
-                : 'self-start bg-gray-300 text-black'
-            }`}
-          >
-            {message.content}
+        {messages.length > 0 ? (
+          messages.map((message) => (
+            <ChatMessage key={message.id} message={message} isCurrentUser={message.sender_id === currentUser.id} />
+          ))
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-gray-500">No messages yet</p>
           </div>
-        ))}
+        )}
       </div>
-      <div className="flex border-t border-gray-200 p-4">
-        <input
-          type="text"
+      <div className="flex gap-2 border-t border-gray-200 p-4">
+        <Input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={handleKeyPress}
+          type="text"
           placeholder="Type your message"
-          className="flex-1 rounded-lg border p-2 focus:border-blue-300 focus:outline-none focus:ring"
         />
-        <button onClick={sendMessage} className="ml-4 rounded-lg bg-blue-500 p-2 text-white">
+        <Button onClick={sendMessage} type="submit">
           Send
-        </button>
+        </Button>
       </div>
     </div>
   )
