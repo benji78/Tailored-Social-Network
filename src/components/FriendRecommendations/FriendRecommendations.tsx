@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import supabase from '../../supabase'
+import { User } from '@supabase/supabase-js'
 
 interface useFriendRecommendationProps {
-  user: { id: string }
+  user: User
 }
 interface UserData {
   connections: string[]
@@ -14,7 +15,7 @@ interface Recommendation {
   score: number
 }
 
-const useFriendRecommendation: React.FC<useFriendRecommendationProps> = ({ user }) => {
+const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user }) => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
 
   useEffect(() => {
@@ -79,9 +80,11 @@ const useFriendRecommendation: React.FC<useFriendRecommendationProps> = ({ user 
     generateFriendRecommendations()
   }, [user.id])
 
+  console.log('recommendations', recommendations)
+
   return (
     <div className="mx-auto max-w-4xl py-8">
-      <h1 className="mb-4 text-2xl font-bold">Friend Recommendations</h1>
+      <h1 className="mb-4 text-2xl font-bold">Friend Recommendations Component</h1>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {recommendations.map((recommendation, index) => (
           <div key={index} className="rounded bg-white p-4 shadow">
@@ -95,4 +98,4 @@ const useFriendRecommendation: React.FC<useFriendRecommendationProps> = ({ user 
   )
 }
 
-export default useFriendRecommendation
+export default FriendRecommendations
