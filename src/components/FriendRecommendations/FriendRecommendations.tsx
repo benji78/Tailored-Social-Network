@@ -12,6 +12,7 @@ interface UserData {
 
 interface Recommendation {
   userId: string
+  username: string
   score: number
 }
 
@@ -26,12 +27,12 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
         .eq('user_id', userId)
 
       const { data: interestsData } = await supabase
-        .from<string, any>('interests')
-        .select('interest')
+        .from<string, any>('is_interested_in')
+        .select('interest_id')
         .eq('user_id', userId)
 
       const connections = connectionsData ? connectionsData.map((conn) => conn.friend_id) : []
-      const interests = interestsData ? interestsData.map((interest) => interest.interest) : []
+      const interests = interestsData ? interestsData.map((interest) => interest.interest_id) : []
 
       return { connections, interests }
     }
@@ -59,17 +60,21 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
 
     const generateFriendRecommendations = async () => {
       const { connections: userConnections, interests: userInterests } = await fetchUserData(user.id)
-      const { data: allUsers } = await supabase.from<string, any>('users').select('id')
-
+      console.log({ connections: userConnections, interests: userInterests })
+      const currentUser = user.id
+      const { data: allUsers } = await supabase.from<string, any>('users2').select('*')
+      console.log(allUsers)
       if (!allUsers) return
 
       const recommendations: Recommendation[] = []
 
       for (const user of allUsers) {
-        if (user.id !== user.id && !userConnections.includes(user.id)) {
+        if (currentUser !== user.id && !userConnections.includes(user.id)) {
+          console.log('test')
           const { connections: otherConnections, interests: otherInterests } = await fetchUserData(user.id)
           const score = calculateRecommendationScore(userConnections, userInterests, otherConnections, otherInterests)
-          recommendations.push({ userId: user.id, score })
+          console.log({ userId: user.id, score })
+          recommendations.push({ userId: user.id, username: user.name, score })
         }
       }
 
@@ -82,6 +87,16 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
 
   console.log('recommendations', recommendations)
 
+  const handleConnect = async (friendId: string) => {
+    const { error } = await supabase.from('connections').insert([{ user_id: user.id, friend_id: friendId }])
+
+    if (error) {
+      console.error('Error connecting to user:', error)
+    } else {
+      console.log('Successfully connected to user:', friendId)
+    }
+  }
+
   return (
     <div className="mx-auto max-w-4xl py-8">
       <h1 className="mb-4 text-2xl font-bold">Friend Recommendations Component</h1>
@@ -89,8 +104,14 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
         {recommendations.map((recommendation, index) => (
           <div key={index} className="rounded bg-white p-4 shadow">
             <h2 className="text-lg font-semibold">{`Recommendation ${index + 1}`}</h2>
-            <p>User ID: {recommendation.userId}</p>
+            <p>Username: {recommendation.username}</p>
             <p>Score: {recommendation.score}</p>
+            <button
+              onClick={() => handleConnect(recommendation.userId)}
+              className="mt-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              Se connecter
+            </button>
           </div>
         ))}
       </div>
