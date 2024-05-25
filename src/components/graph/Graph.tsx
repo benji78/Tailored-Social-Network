@@ -16,7 +16,7 @@ interface Link {
   target: string
 }
 
-const GraphVisualization: React.FC<User> = ({ user }) => {
+const GraphVisualization: React.FC = () => {
   const [graphData, setGraphData] = useState<{ nodes: Node[]; links: Link[] }>({ nodes: [], links: [] })
 
   useEffect(() => {
@@ -28,28 +28,13 @@ const GraphVisualization: React.FC<User> = ({ user }) => {
         const nodesMap: { [id: string]: Node } = {}
         const links: Link[] = []
 
-        const userNames: { [id: string]: string } = {}
         usersData.forEach((user: { id: string; username: string }) => {
-          userNames[user.id] = user.username
+          nodesMap[user.id] = { id: user.id, name: user.username }
         })
 
-        const addConnections = (userId: string, depth: number, source: string | null = null) => {
-          const userConnections = connectionsData.filter((conn) => conn.user_id === userId || conn.friend_id === userId)
-          userConnections.forEach(({ user_id, friend_id }) => {
-            const target = user_id === userId ? friend_id : user_id
-            if (!nodesMap[target]) {
-              nodesMap[target] = { id: target, name: userNames[target] }
-            }
-            links.push({ source: source ?? userId, target }) // Le lien va de la source (userId) vers la cible (target)
-
-            if (depth > 1) {
-              addConnections(target, depth - 1, userId)
-            }
-          })
-        }
-
-        nodesMap[user.id] = { id: user.id, name: userNames[user.id] }
-        addConnections(user.id, 2)
+        connectionsData.forEach(({ user_id, friend_id }) => {
+          links.push({ source: user_id, target: friend_id })
+        })
 
         setGraphData({
           nodes: Object.values(nodesMap),
@@ -59,10 +44,10 @@ const GraphVisualization: React.FC<User> = ({ user }) => {
     }
 
     fetchConnections()
-  }, [user.id])
+  }, [])
 
   return (
-    <div style={{ width: '50%', height: '800px' }}>
+    <div style={{ width: '100%', height: '800px' }}>
       <ForceGraph2D
         graphData={graphData}
         nodeLabel="name"

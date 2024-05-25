@@ -15,7 +15,7 @@ const router = createBrowserRouter([
   { path: '/', element: <App />, errorElement: <NotFound /> },
   { path: 'login', element: <Login /> },
   { path: 'signup', element: <Signup /> },
-  { path: 'graph', element: <GraphPage user={connectedUser} /> },
+  { path: 'graph', element: <GraphPage /> },
   // { path: 'dashbord', element: <Dashbord /> },
 ])
 
