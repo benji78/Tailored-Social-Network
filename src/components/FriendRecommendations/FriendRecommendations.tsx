@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import supabase from '../../supabase'
 import { User } from '@supabase/supabase-js'
-
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 interface useFriendRecommendationProps {
   user: User
 }
@@ -98,24 +100,34 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
   }
 
   return (
-    <div className="mx-auto max-w-4xl py-8">
-      <h1 className="mb-4 text-2xl font-bold">Friend Recommendations Component</h1>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <Carousel
+      opts={{
+        align: 'start',
+      }}
+      className="w-full"
+    >
+      <CarouselContent>
         {recommendations.map((recommendation, index) => (
-          <div key={index} className="rounded bg-white p-4 shadow">
-            <h2 className="text-lg font-semibold">{`Recommendation ${index + 1}`}</h2>
-            <p>Username: {recommendation.username}</p>
-            <p>Score: {recommendation.score}</p>
-            <button
-              onClick={() => handleConnect(recommendation.userId)}
-              className="mt-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
-            >
-              Se connecter
-            </button>
-          </div>
+          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{recommendation.username}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Score: {recommendation.score}</p>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button onClick={() => handleConnect(recommendation.userId)}>Se connecter</Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </CarouselItem>
         ))}
-      </div>
-    </div>
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
   )
 }
 
