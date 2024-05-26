@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import supabase from '../../supabase'
+import supabase from '@/lib/supabase'
 import ForceGraph2D from 'react-force-graph-2d'
 
 interface User {
