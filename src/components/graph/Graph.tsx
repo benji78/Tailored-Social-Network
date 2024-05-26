@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react'
 import supabase from '@/lib/supabase'
 import ForceGraph2D from 'react-force-graph-2d'
 
-interface User {
-  user: { id: string }
-}
-
 interface Node {
   id: string
   name: string

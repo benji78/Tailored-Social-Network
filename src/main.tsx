@@ -25,7 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="signup" element={<Signup />} />
               <Route path="chat" element={<ChatPage />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="graoh" element={<GraphVisualization />} />
+              <Route path="graph" element={<GraphVisualization />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
