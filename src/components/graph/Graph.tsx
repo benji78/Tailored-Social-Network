@@ -54,6 +54,21 @@ const GraphVisualization: React.FC = () => {
         nodeAutoColorBy="id"
         linkDirectionalArrowLength={6} // Longueur des flèches de lien
         linkDirectionalArrowRelPos={1} // Position relative des flèches de lien
+        nodeCanvasObject={(node, ctx, globalScale) => {
+          const nodeSize = 5 // Size of the node
+          ctx.beginPath()
+          ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false)
+          ctx.fillStyle = node.color // Set the color of the node to the random color
+          ctx.fill()
+
+          const label = node.name
+          const fontSize = 12 / globalScale
+          ctx.font = `${fontSize}px Sans-Serif`
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.fillStyle = 'black' // Set the color of the text
+          ctx.fillText(label, node.x, node.y)
+        }}
       />
     </div>
   )
