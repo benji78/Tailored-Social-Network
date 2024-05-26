@@ -18,7 +18,7 @@ const ChatPage: React.FC = () => {
         <UserList onSelectUser={handleSelectUser} />
         <ChatList onSelectChat={handleSelectUser} />
       </div>
-      <div className="w-3/4">
+      <div className="max-h-[90vh] w-3/4">
         {selectedUser ? (
           <Chat otherUser={selectedUser} />
         ) : (
