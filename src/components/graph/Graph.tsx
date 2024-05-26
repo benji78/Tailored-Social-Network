@@ -3,7 +3,7 @@ import supabase from '@/lib/supabase'
 import ForceGraph2D from 'react-force-graph-2d'
 
 interface Node {
-  id: string
+  auth_id: string
   name: string
 }
 
@@ -18,18 +18,22 @@ const GraphVisualization: React.FC = () => {
   useEffect(() => {
     const fetchConnections = async () => {
       const { data: connectionsData } = await supabase.from<string, any>('connections').select('*')
-      const { data: usersData } = await supabase.from<string, any>('users2').select('id, username')
+      const { data: usersData } = await supabase.from<string, any>('users2').select('auth_id, username')
 
       if (connectionsData && usersData) {
         const nodesMap: { [id: string]: Node } = {}
         const links: Link[] = []
 
-        usersData.forEach((user: { id: string; username: string }) => {
-          nodesMap[user.id] = { id: user.id, name: user.username }
+        usersData.forEach((user: { auth_id: string; username: string }) => {
+          if (user.auth_id) {
+            nodesMap[user.auth_id] = { auth_id: user.auth_id, name: user.username }
+          }
         })
 
         connectionsData.forEach(({ user_id, friend_id }) => {
-          links.push({ source: user_id, target: friend_id })
+          if (user_id && friend_id) {
+            links.push({ source: user_id, target: friend_id })
+          }
         })
 
         setGraphData({
