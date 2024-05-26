@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -15,7 +14,6 @@ export default function Profile() {
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState<z.infer<typeof profileSchema> | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const navigate = useNavigate()
   const { session } = useAuth()
 
   const form = useForm<z.infer<typeof profileSchema>>({
