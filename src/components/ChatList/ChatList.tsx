@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import supabase from '../../supabase'
 import { User } from '../../types/Message'
 import { Button } from '../ui/button'
+import { useAuth } from '../auth-context'
+import supabase from '@/lib/supabase'
 
 interface ChatListProps {
-  currentUser: User
   onSelectChat: (user: User) => void
 }
 
-const ChatList: React.FC<ChatListProps> = ({ currentUser, onSelectChat }) => {
+const ChatList: React.FC<ChatListProps> = ({ onSelectChat }) => {
+  const { session } = useAuth()
   const [chats, setChats] = useState<User[]>([])
 
   useEffect(() => {
@@ -19,7 +20,7 @@ const ChatList: React.FC<ChatListProps> = ({ currentUser, onSelectChat }) => {
     const { data: messages, error: messageError } = await supabase
       .from('messages')
       .select('sender_id, receiver_id, created_at')
-      .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
+      .or(`sender_id.eq.${session?.user?.id},receiver_id.eq.${session?.user?.id}`)
       .order('created_at', { ascending: false })
 
     if (messageError) {
@@ -28,12 +29,12 @@ const ChatList: React.FC<ChatListProps> = ({ currentUser, onSelectChat }) => {
     }
 
     if (messages) {
-      const uniqueChatIds = Array.from(new Set(messages.flatMap((msg) => [msg.sender_id, msg.receiver_id]))).filter(
-        (id) => id !== currentUser.id && id !== null && id !== undefined
-      )
+      const uniqueChatIds = Array.from(
+        new Set(messages.flatMap((msg: { sender_id: string; receiver_id: string }) => [msg.sender_id, msg.receiver_id]))
+      ).filter((auth_id) => auth_id != session?.user?.id && auth_id !== null && auth_id !== undefined)
 
       if (uniqueChatIds.length > 0) {
-        const { data: users, error: userError } = await supabase.from('users2').select('*').in('id', uniqueChatIds)
+        const { data: users, error: userError } = await supabase.from('users2').select('*').in('auth_id', uniqueChatIds)
 
         if (userError) {
           console.error('Error fetching users:', userError)
@@ -41,8 +42,14 @@ const ChatList: React.FC<ChatListProps> = ({ currentUser, onSelectChat }) => {
         }
 
         const sortedUsers = users.sort((a, b) => {
-          const aLastMessage = messages.find((msg) => msg.sender_id === a.id || msg.receiver_id === a.id)?.created_at
-          const bLastMessage = messages.find((msg) => msg.sender_id === b.id || msg.receiver_id === b.id)?.created_at
+          const aLastMessage = messages.find(
+            (msg: { sender_id: string; receiver_id: string }) =>
+              msg.sender_id == a.auth_id || msg.receiver_id == a.auth_id
+          )?.created_at
+          const bLastMessage = messages.find(
+            (msg: { sender_id: string; receiver_id: string }) =>
+              msg.sender_id == b.auth_id || msg.receiver_id == b.auth_id
+          )?.created_at
           return new Date(bLastMessage).getTime() - new Date(aLastMessage).getTime()
         })
 

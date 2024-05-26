@@ -1,17 +1,18 @@
 // src/components/Chat.tsx
 import React, { useState, useEffect } from 'react'
-import supabase from '../../supabase'
-import { Message } from '../../types/Message'
+import { Message, User } from '../../types/Message'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import ChatMessage from '../ChatMessage/ChatMessage'
+import { useAuth } from '../auth-context'
+import supabase from '@/lib/supabase'
 
 interface ChatProps {
-  currentUser: { id: string }
-  otherUser: { id: string; username: string }
+  otherUser: User
 }
 
-const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
+const Chat: React.FC<ChatProps> = ({ otherUser }) => {
+  const { session } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
 
@@ -20,29 +21,33 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
 
     const channel = supabase
       .channel('messages')
-      .on<Message>('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
-        const newMessage = payload.new
-        if (
-          (newMessage.sender_id === currentUser.id && newMessage.receiver_id === otherUser.id) ||
-          (newMessage.sender_id === otherUser.id && newMessage.receiver_id === currentUser.id)
-        ) {
-          setMessages((messages) => [...messages, newMessage])
+      .on<Message>(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload: { new: Message }) => {
+          const newMessage = payload.new
+          if (
+            (newMessage.sender_id === session?.user?.id && newMessage.receiver_id === otherUser.auth_id) ||
+            (newMessage.sender_id === otherUser.auth_id && newMessage.receiver_id === session?.user?.id)
+          ) {
+            setMessages((messages) => [...messages, newMessage])
+          }
         }
-      })
+      )
       .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [currentUser.id, otherUser.id])
+  }, [session?.user?.id, otherUser.id])
 
   const fetchMessages = async () => {
     const { data } = await supabase
       .from<string, any>('messages')
       .select('*')
       .or(
-        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUser.id}),` +
-          `and(sender_id.eq.${otherUser.id},receiver_id.eq.${currentUser.id})`
+        `and(sender_id.eq.${session?.user?.id},receiver_id.eq.${otherUser.auth_id}),` +
+          `and(sender_id.eq.${otherUser.auth_id},receiver_id.eq.${session?.user?.id})`
       )
       .order('created_at', { ascending: true })
 
@@ -50,11 +55,11 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
   }
 
   const sendMessage = async () => {
-    if (newMessage.trim()) {
-      const { error } = await supabase.from<string, any>('messages').insert<Message>([
+    if (newMessage.trim() && session?.user?.id) {
+      const { error } = await supabase.from('messages').insert([
         {
-          sender_id: currentUser.id,
-          receiver_id: otherUser.id,
+          sender_id: session.user.id,
+          receiver_id: otherUser.auth_id,
           content: newMessage.trim(),
         },
       ])
@@ -79,7 +84,7 @@ const Chat: React.FC<ChatProps> = ({ currentUser, otherUser }) => {
       <div className="flex-1 overflow-y-auto p-4">
         {messages.length > 0 ? (
           messages.map((message) => (
-            <ChatMessage key={message.id} message={message} isCurrentUser={message.sender_id === currentUser.id} />
+            <ChatMessage key={message.id} message={message} isCurrentUser={message.sender_id === session?.user?.id} />
           ))
         ) : (
           <div className="flex h-full items-center justify-center">
