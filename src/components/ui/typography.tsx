@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { cn } from '@/lib/utils.ts'
+import { cn } from '@/lib/utils'
 
 // https://github.com/kian1991/shadcn-typography
 const H1 = forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(

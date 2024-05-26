@@ -1,4 +1,4 @@
-import { H1, P } from '@/components/ui/typography.tsx'
+import { H1, P } from '@/components/ui/typography'
 
 export default function NotFound() {
   return (
