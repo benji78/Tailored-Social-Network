@@ -127,7 +127,7 @@ const Project: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center p-4 text-white">
+    <div className="flex max-h-screen w-full flex-col items-center p-4 text-white">
       <Card className="mb-8 w-full max-w-4xl">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">Add New Project</CardTitle>
