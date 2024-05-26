@@ -3,7 +3,7 @@ import supabase from '@/lib/supabase'
 import ForceGraph2D from 'react-force-graph-2d'
 
 interface Node {
-  auth_id: string
+  id: string
   name: string
 }
 
@@ -26,7 +26,7 @@ const GraphVisualization: React.FC = () => {
 
         usersData.forEach((user: { auth_id: string; username: string }) => {
           if (user.auth_id) {
-            nodesMap[user.auth_id] = { auth_id: user.auth_id, name: user.username }
+            nodesMap[user.auth_id] = { id: user.auth_id, name: user.username }
           }
         })
 
@@ -35,7 +35,7 @@ const GraphVisualization: React.FC = () => {
             links.push({ source: user_id, target: friend_id })
           }
         })
-
+        console.log(links)
         setGraphData({
           nodes: Object.values(nodesMap),
           links,
