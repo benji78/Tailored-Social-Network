@@ -9,6 +9,8 @@ import Signup from '@/pages/signup'
 import AuthProvider from '@/components/auth-context'
 import { Navbar } from '@/components/navbar'
 import { ThemeProvider } from '@/components/theme-provider'
+import ChatPage from './pages/ChatPage'
+import Profile from './pages/profile'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -20,6 +22,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route index element={<App />} />
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
+              <Route path="chat" element={<ChatPage />} />
+              <Route path="profile" element={<Profile />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

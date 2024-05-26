@@ -16,6 +16,7 @@ import {
   Menu,
   User2,
   UserPlus2,
+  MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '@/components/auth-context'
 
@@ -31,6 +32,7 @@ export function Navbar() {
         <NavBarItem to="/updates" icon={Calendar} label="Updates" />
         <NavBarItem to="/projets" icon={BriefcaseBusiness} label="Projects" />
         <NavBarItem to="/leaderboard" icon={BarChartHorizontal} label="Leaderboard" />
+        <NavBarItem to="/chat" icon={MessageCircle} label="Chat" />
       </>
     ) : (
       <>
