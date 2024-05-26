@@ -128,7 +128,7 @@ const Updates: React.FC = () => {
 
   return (
     <div className="flex w-full flex-col items-center p-4 text-white">
-      <ScrollArea className="max-h-[90vh] w-full max-w-4xl">
+      <ScrollArea className="max-h-[90vh] w-full">
         {updates.map((update, index) => (
           <React.Fragment key={update.id}>
             <div className="mb-4 flex">
