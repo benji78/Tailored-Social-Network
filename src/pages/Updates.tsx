@@ -39,7 +39,7 @@ const Updates: React.FC = () => {
         )
       `
       )
-      .order('created_at', { ascending: false }) // Change to descending order
+      .order('created_at', { ascending: false }) // Order in descending order for display
 
     if (error) {
       console.error('Error fetching updates:', error)
@@ -82,23 +82,30 @@ const Updates: React.FC = () => {
   }
 
   const calculateConsecutiveDays = (updates: Update[], projectId: number, username: string) => {
-    const projectUpdates = updates.filter((update) => update.project_id === projectId && update.username === username)
+    const projectUpdates = updates
+      .filter((update) => update.project_id === projectId && update.username === username)
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+
     if (projectUpdates.length === 0) return 0
 
-    let consecutiveDays = 1
+    let maxConsecutiveDays = 1
+    let currentStreak = 1
+
     for (let i = 1; i < projectUpdates.length; i++) {
       const prevDate = new Date(projectUpdates[i - 1].created_at)
       const currDate = new Date(projectUpdates[i].created_at)
-      const diffTime = Math.abs(currDate.getTime() - prevDate.getTime())
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      const diffTime = currDate.getTime() - prevDate.getTime()
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
       if (diffDays === 1) {
-        consecutiveDays++
-      } else {
-        consecutiveDays = 1
+        currentStreak++
+        maxConsecutiveDays = Math.max(maxConsecutiveDays, currentStreak)
+      } else if (diffDays > 1) {
+        currentStreak = 1
       }
     }
-    return consecutiveDays
+
+    return maxConsecutiveDays
   }
 
   const formatDate = (dateString: string) => {
