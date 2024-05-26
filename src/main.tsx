@@ -11,6 +11,7 @@ import { Navbar } from '@/components/navbar'
 import { ThemeProvider } from '@/components/theme-provider'
 import ChatPage from './pages/ChatPage'
 import Profile from './pages/profile'
+import FriendRecommendationsPage from './pages/FriendRecommendationsPage'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="signup" element={<Signup />} />
               <Route path="chat" element={<ChatPage />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="friendRecommendation" element={<FriendRecommendationsPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

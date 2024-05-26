@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
-import supabase from '../../supabase'
-import { User } from '@supabase/supabase-js'
+import supabase from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
-interface useFriendRecommendationProps {
-  user: User
-}
+import { useAuth } from '../auth-context'
+
 interface UserData {
   connections: string[]
   interests: string[]
@@ -18,8 +16,10 @@ interface Recommendation {
   score: number
 }
 
-const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user }) => {
+const FriendRecommendations: React.FC = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
+  const { session } = useAuth()
+  const user = session?.user
 
   useEffect(() => {
     const fetchUserData = async (userId: string): Promise<UserData> => {
@@ -33,8 +33,8 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
         .select('interest_id')
         .eq('user_id', userId)
 
-      const connections = connectionsData ? connectionsData.map((conn) => conn.friend_id) : []
-      const interests = interestsData ? interestsData.map((interest) => interest.interest_id) : []
+      const connections = connectionsData ? connectionsData.map((conn: { friend_id: any }) => conn.friend_id) : []
+      const interests = interestsData ? interestsData.map((interest: { interest_id: any }) => interest.interest_id) : []
 
       return { connections, interests }
     }
@@ -61,41 +61,48 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
     }
 
     const generateFriendRecommendations = async () => {
-      const { connections: userConnections, interests: userInterests } = await fetchUserData(user.id)
-      console.log({ connections: userConnections, interests: userInterests })
-      const currentUser = user.id
-      const { data: allUsers } = await supabase.from<string, any>('users2').select('*')
-      console.log(allUsers)
-      if (!allUsers) return
+      const currentUser = session?.user?.id
+      if (currentUser) {
+        const { connections: userConnections, interests: userInterests } = await fetchUserData(currentUser)
+        console.log({ connections: userConnections, interests: userInterests })
+        const { data: allUsers } = await supabase.from<string, any>('users2').select('*')
+        console.log(allUsers)
+        if (!allUsers) return
 
-      const recommendations: Recommendation[] = []
+        const recommendations: Recommendation[] = []
 
-      for (const user of allUsers) {
-        if (currentUser !== user.id && !userConnections.includes(user.id)) {
-          console.log('test')
-          const { connections: otherConnections, interests: otherInterests } = await fetchUserData(user.id)
-          const score = calculateRecommendationScore(userConnections, userInterests, otherConnections, otherInterests)
-          console.log({ userId: user.id, score })
-          recommendations.push({ userId: user.id, username: user.name, score })
+        for (const user of allUsers) {
+          if (currentUser !== user.auth_id && !userConnections.includes(user.auth_id) && user.auth_id) {
+            const { connections: otherConnections, interests: otherInterests } = await fetchUserData(user.auth_id)
+            const score = calculateRecommendationScore(userConnections, userInterests, otherConnections, otherInterests)
+            recommendations.push({ userId: user.auth_id, username: user.username, score })
+          }
         }
-      }
 
-      recommendations.sort((a, b) => b.score - a.score)
-      setRecommendations(recommendations.slice(0, 10))
+        recommendations.sort((a, b) => b.score - a.score)
+        setRecommendations(recommendations.slice(0, 10))
+      }
     }
 
     generateFriendRecommendations()
-  }, [user.id])
-
-  console.log('recommendations', recommendations)
+  }, [session?.user?.id])
 
   const handleConnect = async (friendId: string) => {
-    const { error } = await supabase.from('connections').insert([{ user_id: user.id, friend_id: friendId }])
+    if (user) {
+      const { error } = await supabase.from('connections').insert([{ user_id: user.id, friend_id: friendId }])
 
-    if (error) {
-      console.error('Error connecting to user:', error)
-    } else {
-      console.log('Successfully connected to user:', friendId)
+      if (error) {
+        console.error('Error connecting to user:', error)
+      } else {
+        console.log('Successfully connected to user:', friendId)
+        const index = recommendations.findIndex((recommendation) => recommendation.userId === friendId)
+        if (index !== -1) {
+          // Supprimer la recommandation de la liste
+          const updatedRecommendations = [...recommendations]
+          updatedRecommendations.splice(index, 1)
+          setRecommendations(recommendations.filter((recommendation) => recommendation.userId !== friendId))
+        }
+      }
     }
   }
 
@@ -108,7 +115,7 @@ const FriendRecommendations: React.FC<useFriendRecommendationProps> = ({ user })
     >
       <CarouselContent>
         {recommendations.map((recommendation, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem key={index} className={`${recommendations.length > 3 ? 'md:basis-1/2 lg:basis-1/3' : ''}`}>
             <div>
               <Card>
                 <CardHeader>
