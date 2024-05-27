@@ -31,6 +31,7 @@ export function Navbar() {
         <NavBarItem to="/profile" icon={User2} label="Profile" />
         <NavBarItem to="/updates" icon={Calendar} label="Updates" />
         <NavBarItem to="/" icon={BriefcaseBusiness} label="Projects" />
+        <NavBarItem to="/my-projects" icon={BriefcaseBusiness} label="My Projects" />
         <NavBarItem to="/leaderboard" icon={BarChartHorizontal} label="Leaderboard" />
         <NavBarItem to="/chat" icon={MessageCircle} label="Chat" />
         <NavBarItem to="/friendRecommendation" icon={User2} label="Recommendations" />
