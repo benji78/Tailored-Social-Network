@@ -57,7 +57,7 @@ const GraphVisualization: React.FC = () => {
         nodeCanvasObject={(node, ctx, globalScale) => {
           const nodeSize = 5 // Size of the node
           ctx.beginPath()
-          ctx.arc(node.x, node.y, nodeSize, 0, 2 * Math.PI, false)
+          ctx.arc(node.x ? node.x : 0, node.y ? node.y : 0, nodeSize, 0, 2 * Math.PI, false)
           ctx.fillStyle = node.color // Set the color of the node to the random color
           ctx.fill()
 
@@ -67,7 +67,7 @@ const GraphVisualization: React.FC = () => {
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
           ctx.fillStyle = 'black' // Set the color of the text
-          ctx.fillText(label, node.x, node.y)
+          ctx.fillText(label, node.x ? node.x : 0, node.y ? node.y : 0)
         }}
       />
     </div>
