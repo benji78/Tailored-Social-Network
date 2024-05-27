@@ -30,9 +30,10 @@ export function Navbar() {
         <NavBarItem to="/" icon={Home} label="Home" />
         <NavBarItem to="/profile" icon={User2} label="Profile" />
         <NavBarItem to="/updates" icon={Calendar} label="Updates" />
-        <NavBarItem to="/projets" icon={BriefcaseBusiness} label="Projects" />
-        <NavBarItem to="/graph" icon={BarChartHorizontal} label="Graph" />
+        <NavBarItem to="/my-projects" icon={BriefcaseBusiness} label="My Projects" />
+        <NavBarItem to="/leaderboard" icon={BarChartHorizontal} label="Leaderboard" />
         <NavBarItem to="/chat" icon={MessageCircle} label="Chat" />
+        <NavBarItem to="/graph" icon={BarChartHorizontal} label="Graph" />
       </>
     ) : (
       <>
