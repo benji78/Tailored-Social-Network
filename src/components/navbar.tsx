@@ -19,6 +19,7 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '@/components/auth-context'
+import Notifications from './Notifications/Notifications'
 
 export function Navbar() {
   const { session, logOut } = useAuth()
@@ -90,6 +91,7 @@ export function Navbar() {
             <SearchBar className="md:w-2/3 lg:w-1/2 xl:w-1/3" />
           </div>
           <ModeToggle />
+          <Notifications />
           <D.DropdownMenu>
             <D.DropdownMenuTrigger asChild>
               <Button className="rounded-full" size="icon" variant="secondary">

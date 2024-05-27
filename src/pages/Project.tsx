@@ -72,15 +72,38 @@ const Project: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
-    const { error } = await supabase.from('projects').insert({
+    const { error: projectError } = await supabase.from('projects').insert({
       user_id: session?.user?.id,
       project_title: newProject.title,
       project_description: newProject.description,
       project_url: newProject.url,
     })
 
-    if (error) {
-      console.error('Error adding project:', error)
+    if (projectError) {
+      console.error('Error adding project:', projectError)
+      return
+    }
+
+    // Fetch all users except the current user
+    const { data: users, error: usersError } = await supabase
+      .from('users2')
+      .select('auth_id')
+      .neq('auth_id', session?.user?.id)
+
+    if (usersError) {
+      console.error('Error fetching users:', usersError)
+      return
+    }
+
+    const notifications = users.map((user: { auth_id: string }) => ({
+      user_id: user.auth_id,
+      content: `A new project titled "${newProject.title}" has been added.`,
+      is_read: false,
+    }))
+
+    const { error: notificationError } = await supabase.from('notifications').insert(notifications)
+    if (notificationError) {
+      console.error('Error creating notifications:', notificationError)
       return
     }
 
