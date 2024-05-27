@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { User } from '../../types/Message'
-import { ComboboxDemo } from '@/components/ComboBox/ComboBox'
+import { Combobox } from '@/components/ComboBox/ComboBox'
 import { useAuth } from '../auth-context'
 import supabase from '@/lib/supabase'
 
@@ -31,7 +31,7 @@ const UserList: React.FC<UserListProps> = ({ onSelectUser }) => {
   return (
     <div className="p-4">
       <h2 className="mb-4 text-lg font-bold">Users</h2>
-      <ComboboxDemo users={users} onSelectUser={onSelectUser} />
+      <Combobox users={users} onSelectUser={onSelectUser} />
     </div>
   )
 }

@@ -13,7 +13,7 @@ interface ComboboxDemoProps {
   onSelectUser: (user: User) => void
 }
 
-export function ComboboxDemo({ users, onSelectUser }: ComboboxDemoProps) {
+export function Combobox({ users, onSelectUser }: ComboboxDemoProps) {
   const [open, setOpen] = React.useState(false)
   const [selectedUser, setSelectedUser] = React.useState<User | null>(null)
   const [searchTerm, setSearchTerm] = React.useState('')
