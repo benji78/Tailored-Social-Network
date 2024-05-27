@@ -34,9 +34,11 @@ export function Navbar() {
         <NavBarItem to="/my-projects" icon={BriefcaseBusiness} label="My Projects" />
         <NavBarItem to="/leaderboard" icon={BarChartHorizontal} label="Leaderboard" />
         <NavBarItem to="/chat" icon={MessageCircle} label="Chat" />
+        <NavBarItem to="/graph" icon={BarChartHorizontal} label="Graph" />
       </>
     ) : (
       <>
+        <NavBarItem to="/graph" icon={BarChartHorizontal} label="Graph" />
         <NavBarItem to="/login" icon={LogIn} label="Login" />
         <NavBarItem to="/signup" icon={UserPlus2} label="Sign Up" />
       </>
