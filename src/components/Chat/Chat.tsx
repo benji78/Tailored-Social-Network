@@ -64,7 +64,20 @@ const Chat: React.FC<ChatProps> = ({ otherUser }) => {
         },
       ])
 
-      if (error) console.error(error)
+      if (error) {
+        console.error(error)
+      } else {
+        const { error: notificationError } = await supabase.from('notifications').insert([
+          {
+            user_id: otherUser.auth_id,
+            content: `New message from ${session.user.email}: ${newMessage.trim()}`,
+            is_read: false,
+          },
+        ])
+
+        if (notificationError) console.error(notificationError)
+      }
+
       setNewMessage('')
     }
   }

@@ -19,6 +19,7 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '@/components/auth-context'
+import Notifications from './Notifications/Notifications'
 
 export function Navbar() {
   const { session, logOut } = useAuth()
@@ -34,10 +35,12 @@ export function Navbar() {
         <NavBarItem to="/my-projects" icon={BriefcaseBusiness} label="My Projects" />
         <NavBarItem to="/leaderboard" icon={BarChartHorizontal} label="Leaderboard" />
         <NavBarItem to="/chat" icon={MessageCircle} label="Chat" />
+        <NavBarItem to="/graph" icon={BarChartHorizontal} label="Graph" />
         <NavBarItem to="/friendRecommendation" icon={User2} label="Recommendations" />
       </>
     ) : (
       <>
+        <NavBarItem to="/graph" icon={BarChartHorizontal} label="Graph" />
         <NavBarItem to="/login" icon={LogIn} label="Login" />
         <NavBarItem to="/signup" icon={UserPlus2} label="Sign Up" />
       </>
@@ -92,6 +95,7 @@ export function Navbar() {
             <SearchBar className="md:w-2/3 lg:w-1/2 xl:w-1/3" />
           </div>
           <ModeToggle />
+          <Notifications />
           <D.DropdownMenu>
             <D.DropdownMenuTrigger asChild>
               <Button className="rounded-full" size="icon" variant="secondary">
