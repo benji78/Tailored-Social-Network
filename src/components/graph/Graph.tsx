@@ -74,11 +74,11 @@ const GraphVisualization: React.FC = () => {
         graphData={graphData}
         nodeLabel="name"
         nodeAutoColorBy="type"
-        linkDirectionalArrowLength={6}
-        linkDirectionalArrowRelPos={1}
+        linkDirectionalArrowLength={15}
+        linkDirectionalArrowRelPos={0.9}
         linkCurvature={0.25} // Curve links a bit for better visibility
         nodeCanvasObject={(node, ctx, globalScale) => {
-          const nodeSize = node.type === 'user' ? 10 : 8 // Adjust node size for user and tag nodes
+          const nodeSize = node.type === 'user' ? 8 : 6 // Adjust node size for user and tag nodes
           ctx.beginPath()
           ctx.arc(node.x ?? 0, node.y ?? 0, nodeSize, 0, 2 * Math.PI, false)
           ctx.fillStyle = node.color
