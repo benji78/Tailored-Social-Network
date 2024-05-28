@@ -13,6 +13,7 @@ interface Update {
   project_description: string
   project_url: string
   username: string
+  tags: string[]
 }
 
 const Updates: React.FC = () => {
@@ -57,8 +58,20 @@ const Updates: React.FC = () => {
       return
     }
 
+    const projectIds = updatesData.map((update: any) => update.project_id)
+    const { data: tagsData, error: tagsError } = await supabase
+      .from('have_tags')
+      .select('project_id, tags (name)')
+      .in('project_id', projectIds)
+
+    if (tagsError) {
+      console.error('Error fetching tags:', tagsError)
+      return
+    }
+
     const formattedUpdates = updatesData.map((update: any) => {
       const user = usersData.find((user: any) => user.auth_id === update.projects.user_id)
+      const tags = tagsData.filter((tag: any) => tag.project_id === update.project_id).map((tag: any) => tag.tags.name)
       return {
         id: update.id,
         project_id: update.project_id,
@@ -68,6 +81,7 @@ const Updates: React.FC = () => {
         project_description: update.projects.project_description,
         project_url: update.projects.project_url,
         username: user ? user.username : 'Unknown',
+        tags: tags,
       }
     })
 
@@ -153,6 +167,16 @@ const Updates: React.FC = () => {
                             {update.project_title} <span className="text-sm text-gray-400">by {update.username}</span>
                           </CardTitle>
                           <p className="text-sm text-gray-400">{update.project_description}</p>
+                          <div className="flex gap-1 text-sm text-gray-400">
+                            {update.tags.map((tag, index) => (
+                              <span
+                                key={index}
+                                className="inline-block rounded bg-gray-200 px-2 py-1 text-sm text-gray-800"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </CardHeader>

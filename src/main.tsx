@@ -11,6 +11,7 @@ import { Navbar } from '@/components/navbar'
 import { ThemeProvider } from '@/components/theme-provider'
 import ChatPage from './pages/ChatPage'
 import Profile from './pages/profile'
+import FriendRecommendationsPage from './pages/FriendRecommendationsPage'
 import GraphVisualization from './components/graph/Graph'
 import Project from './pages/Project'
 import Updates from './pages/Updates'
@@ -28,6 +29,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="chat" element={<ChatPage />} />
               <Route path="profile" element={<Profile />} />
               <Route path="graph" element={<GraphVisualization />} />
+              <Route path="friendRecommendation" element={<FriendRecommendationsPage />} />
               <Route path="my-projects" element={<Project />} />
               <Route path="updates" element={<Updates />} />
               <Route path="*" element={<NotFound />} />

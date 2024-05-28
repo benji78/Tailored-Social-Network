@@ -5,6 +5,7 @@ import ForceGraph2D from 'react-force-graph-2d'
 interface Node {
   id: string
   name: string
+  type: string // "user" or "tag"
 }
 
 interface Link {
@@ -17,29 +18,50 @@ const GraphVisualization: React.FC = () => {
 
   useEffect(() => {
     const fetchConnections = async () => {
-      const { data: connectionsData } = await supabase.from<string, any>('connections').select('*')
-      const { data: usersData } = await supabase.from<string, any>('users2').select('auth_id, username')
+      const { data: connectionsData } = await supabase.from('connections').select('*')
+      const { data: usersData } = await supabase.from('users2').select('auth_id, username')
+      const { data: tagsData } = await supabase.from('tags').select('*')
+      const { data: tagsLinksData } = await supabase.from('have_tags').select('*')
+      const { data: projectsData } = await supabase.from('projects').select('*')
 
-      if (connectionsData && usersData) {
-        const nodesMap: { [id: string]: Node } = {}
+      if (connectionsData && usersData && tagsLinksData && tagsData && projectsData) {
+        const nodes: Node[] = []
         const links: Link[] = []
 
-        usersData.forEach((user: { auth_id: string; username: string }) => {
+        usersData.forEach((user) => {
           if (user.auth_id) {
-            nodesMap[user.auth_id] = { id: user.auth_id, name: user.username }
+            nodes.push({ id: user.auth_id, name: user.username, type: 'user' })
           }
         })
 
-        connectionsData.forEach(({ user_id, friend_id }) => {
+        // Création des nœuds pour les tags
+        tagsData.forEach((tag) => {
+          nodes.push({ id: tag.id.toString(), name: tag.name, type: 'tag' })
+        })
+
+        projectsData.forEach((project) => {
+          const userNode = nodes.find((node) => node.id === project.user_id)
+
+          if (userNode) {
+            // Création des liens entre le projet et ses tags
+            const projectTags = tagsLinksData.filter((tagLink) => tagLink.project_id === project.id)
+            projectTags.forEach((tagLink) => {
+              const tagNode = nodes.find((node) => node.id === tagLink.tags_id.toString())
+              if (tagNode) {
+                links.push({ source: userNode.id.toString(), target: tagNode.id })
+              }
+            })
+          }
+        })
+
+        // Construct links between users (if needed)
+        connectionsData?.forEach(({ user_id, friend_id }) => {
           if (user_id && friend_id) {
             links.push({ source: user_id, target: friend_id })
           }
         })
-        console.log(links)
-        setGraphData({
-          nodes: Object.values(nodesMap),
-          links,
-        })
+
+        setGraphData({ nodes, links })
       }
     }
 
@@ -51,14 +73,15 @@ const GraphVisualization: React.FC = () => {
       <ForceGraph2D
         graphData={graphData}
         nodeLabel="name"
-        nodeAutoColorBy="id"
-        linkDirectionalArrowLength={6} // Longueur des flèches de lien
-        linkDirectionalArrowRelPos={1} // Position relative des flèches de lien
+        nodeAutoColorBy="type"
+        linkDirectionalArrowLength={15}
+        linkDirectionalArrowRelPos={0.9}
+        linkCurvature={0.25} // Curve links a bit for better visibility
         nodeCanvasObject={(node, ctx, globalScale) => {
-          const nodeSize = 5 // Size of the node
+          const nodeSize = node.type === 'user' ? 8 : 6 // Adjust node size for user and tag nodes
           ctx.beginPath()
-          ctx.arc(node.x ? node.x : 0, node.y ? node.y : 0, nodeSize, 0, 2 * Math.PI, false)
-          ctx.fillStyle = node.color // Set the color of the node to the random color
+          ctx.arc(node.x ?? 0, node.y ?? 0, nodeSize, 0, 2 * Math.PI, false)
+          ctx.fillStyle = node.color
           ctx.fill()
 
           const label = node.name
@@ -66,8 +89,8 @@ const GraphVisualization: React.FC = () => {
           ctx.font = `${fontSize}px Sans-Serif`
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
-          ctx.fillStyle = 'black' // Set the color of the text
-          ctx.fillText(label, node.x ? node.x : 0, node.y ? node.y : 0)
+          ctx.fillStyle = 'black'
+          ctx.fillText(label, node.x ?? 0, node.y ?? 0)
         }}
       />
     </div>
