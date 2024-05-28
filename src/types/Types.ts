@@ -18,3 +18,15 @@ export interface Message {
   content: string
   created_at?: string
 }
+
+export interface Update {
+  id: number
+  project_id: number
+  update_content: string
+  created_at: string
+  project_title?: string
+  project_description?: string
+  project_url?: string
+  username?: string
+  tags?: string[]
+}
