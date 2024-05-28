@@ -3,6 +3,7 @@ import supabase from '@/lib/supabase'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { FlameIcon } from 'lucide-react'
+import { useAuth } from '@/components/auth-context'
 
 interface Update {
   id: number
@@ -18,6 +19,7 @@ interface Update {
 
 const Updates: React.FC = () => {
   const [updates, setUpdates] = useState<Update[]>([])
+  const { session } = useAuth()
 
   useEffect(() => {
     fetchUpdates()
@@ -69,21 +71,25 @@ const Updates: React.FC = () => {
       return
     }
 
-    const formattedUpdates = updatesData.map((update: any) => {
-      const user = usersData.find((user: any) => user.auth_id === update.projects.user_id)
-      const tags = tagsData.filter((tag: any) => tag.project_id === update.project_id).map((tag: any) => tag.tags.name)
-      return {
-        id: update.id,
-        project_id: update.project_id,
-        update_content: update.update_content,
-        created_at: update.created_at,
-        project_title: update.projects.project_title,
-        project_description: update.projects.project_description,
-        project_url: update.projects.project_url,
-        username: user ? user.username : 'Unknown',
-        tags: tags,
-      }
-    })
+    const formattedUpdates = updatesData
+      .filter((update: any) => update.projects.user_id !== session?.user?.id) // Filter out updates from the logged-in user
+      .map((update: any) => {
+        const user = usersData.find((user: any) => user.auth_id === update.projects.user_id)
+        const tags = tagsData
+          .filter((tag: any) => tag.project_id === update.project_id)
+          .map((tag: any) => tag.tags.name)
+        return {
+          id: update.id,
+          project_id: update.project_id,
+          update_content: update.update_content,
+          created_at: update.created_at,
+          project_title: update.projects.project_title,
+          project_description: update.projects.project_description,
+          project_url: update.projects.project_url,
+          username: user ? user.username : 'Unknown',
+          tags: tags,
+        }
+      })
 
     setUpdates(formattedUpdates)
   }
@@ -102,24 +108,22 @@ const Updates: React.FC = () => {
 
     if (projectUpdates.length === 0) return 0
 
-    let maxConsecutiveDays = 1
     let currentStreak = 1
 
     for (let i = 1; i < projectUpdates.length; i++) {
-      const prevDate = new Date(projectUpdates[i - 1].created_at)
-      const currDate = new Date(projectUpdates[i].created_at)
-      const diffTime = currDate.getTime() - prevDate.getTime()
+      const prevDate = new Date(projectUpdates[i - 1].created_at).setHours(0, 0, 0, 0)
+      const currDate = new Date(projectUpdates[i].created_at).setHours(0, 0, 0, 0)
+      const diffTime = currDate - prevDate
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
       if (diffDays === 1) {
         currentStreak++
-        maxConsecutiveDays = Math.max(maxConsecutiveDays, currentStreak)
-      } else if (diffDays > 1) {
+      } else if (diffDays > 1 || diffDays === 0) {
         currentStreak = 1
       }
     }
 
-    return maxConsecutiveDays
+    return currentStreak
   }
 
   const formatDate = (dateString: string) => {

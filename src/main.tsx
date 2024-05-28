@@ -15,6 +15,7 @@ import FriendRecommendationsPage from './pages/FriendRecommendationsPage'
 import GraphVisualization from './components/graph/Graph'
 import Project from './pages/Project'
 import Updates from './pages/Updates'
+import LeaderBoard from './pages/LeaderBoard'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -32,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="friendRecommendation" element={<FriendRecommendationsPage />} />
               <Route path="my-projects" element={<Project />} />
               <Route path="updates" element={<Updates />} />
+              <Route path="leaderboard" element={<LeaderBoard />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

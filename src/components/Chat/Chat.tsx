@@ -1,6 +1,6 @@
 // src/components/Chat.tsx
 import React, { useState, useEffect } from 'react'
-import { Message, User } from '../../types/Message'
+import { Message, User } from '../../types/Types'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import ChatMessage from '../ChatMessage/ChatMessage'

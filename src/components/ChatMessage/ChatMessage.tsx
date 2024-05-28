@@ -1,5 +1,5 @@
 import { Card } from '../ui/card'
-import { Message } from '@/types/Message'
+import { Message } from '@/types/Types'
 
 const ChatMessage = ({ message, isCurrentUser }: { message: Message; isCurrentUser: boolean }) => {
   return (

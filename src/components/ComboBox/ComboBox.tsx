@@ -6,7 +6,7 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { User } from '../../types/Message'
+import { User } from '../../types/Types'
 
 interface ComboboxDemoProps {
   users: User[]
@@ -30,7 +30,7 @@ export function Combobox({ users, onSelectUser }: ComboboxDemoProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
-          {selectedUser ? selectedUser.username : 'Select user...'}
+          {selectedUser ? selectedUser.username : 'Start chatting...'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

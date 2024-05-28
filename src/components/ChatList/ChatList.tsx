@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { User } from '../../types/Message'
+import { User } from '../../types/Types'
 import { Button } from '../ui/button'
 import { useAuth } from '../auth-context'
 import supabase from '@/lib/supabase'

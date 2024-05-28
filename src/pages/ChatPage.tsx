@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import UserList from '../components/UserList/UserList'
 import ChatList from '../components/ChatList/ChatList'
 import Chat from '../components/Chat/Chat'
-import { User } from '../types/Message'
+import { User } from '../types/Types'
 
 const ChatPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
