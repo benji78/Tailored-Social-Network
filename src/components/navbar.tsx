@@ -2,14 +2,12 @@ import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import NavBarItem from '@/components/nav-bar-item'
 import ModeToggle from '@/components/mode-toggle'
-import SearchBar from '@/components/search-bar'
 import * as D from '@/components/ui/dropdown-menu'
 import * as S from '@/components/ui/sheet'
 import {
   BarChartHorizontal,
   BriefcaseBusiness,
   Building2,
-  Calendar,
   CircleUser,
   Home,
   LogIn,
@@ -20,18 +18,19 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/components/auth-context'
 import Notifications from './Notifications/Notifications'
+import { useEffect, useState } from 'react'
+import supabase from '@/lib/supabase'
 
 export function Navbar() {
   const { session, logOut } = useAuth()
   const navigate = useNavigate()
+  const [username, setUsername] = useState('')
 
   const NavItems = () =>
     session ? (
       <>
         <NavBarItem to="/" icon={Home} label="Home" />
         <NavBarItem to="/profile" icon={User2} label="Profile" />
-        <NavBarItem to="/updates" icon={Calendar} label="Updates" />
-        <NavBarItem to="/" icon={BriefcaseBusiness} label="Projects" />
         <NavBarItem to="/my-projects" icon={BriefcaseBusiness} label="My Projects" />
         <NavBarItem to="/leaderboard" icon={BarChartHorizontal} label="Leaderboard" />
         <NavBarItem to="/chat" icon={MessageCircle} label="Chat" />
@@ -50,9 +49,26 @@ export function Navbar() {
     if (error) {
       alert(error.message)
     } else {
-      navigate('/')
+      navigate('/login')
     }
   }
+
+  useEffect(() => {
+    const fetchUsername = async () => {
+      if (session?.user?.id) {
+        const { data, error } = await supabase.from('users2').select('username').eq('auth_id', session.user.id).single()
+
+        if (error) {
+          console.error('Error fetching username:', error)
+        } else {
+          setUsername(data.username)
+        }
+      }
+    }
+
+    fetchUsername()
+  }, [session?.user?.id])
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -91,11 +107,9 @@ export function Navbar() {
               </nav>
             </S.SheetContent>
           </S.Sheet>
-          <div className="w-full flex-1">
-            <SearchBar className="md:w-2/3 lg:w-1/2 xl:w-1/3" />
-          </div>
+          <div className="w-full flex-1">{}</div>
           <ModeToggle />
-          <Notifications />
+          {session && <Notifications />}
           <D.DropdownMenu>
             <D.DropdownMenuTrigger asChild>
               <Button className="rounded-full" size="icon" variant="secondary">
@@ -104,10 +118,7 @@ export function Navbar() {
               </Button>
             </D.DropdownMenuTrigger>
             <D.DropdownMenuContent align="end">
-              <D.DropdownMenuLabel>My Account</D.DropdownMenuLabel>
-              <D.DropdownMenuSeparator />
-              <D.DropdownMenuItem>Settings</D.DropdownMenuItem>
-              <D.DropdownMenuItem>Support</D.DropdownMenuItem>
+              <D.DropdownMenuLabel>{username}</D.DropdownMenuLabel>
               <D.DropdownMenuSeparator />
               <D.DropdownMenuItem onClick={handleLogOut}>Log Out</D.DropdownMenuItem>
             </D.DropdownMenuContent>

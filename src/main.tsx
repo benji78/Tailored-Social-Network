@@ -2,7 +2,6 @@ import '@/styles/globals.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import App from '@/pages/App'
 import NotFound from '@/pages/not-found'
 import Login from '@/pages/login'
 import Signup from '@/pages/signup'
@@ -24,7 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Navbar />}>
-              <Route index element={<App />} />
+              <Route index element={<Updates />} />
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
               <Route path="chat" element={<ChatPage />} />
@@ -32,7 +31,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="graph" element={<GraphVisualization />} />
               <Route path="friendRecommendation" element={<FriendRecommendationsPage />} />
               <Route path="my-projects" element={<Project />} />
-              <Route path="updates" element={<Updates />} />
               <Route path="leaderboard" element={<LeaderBoard />} />
               <Route path="*" element={<NotFound />} />
             </Route>

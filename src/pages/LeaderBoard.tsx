@@ -136,7 +136,7 @@ const LeaderBoard: React.FC = () => {
   }
 
   return (
-    <div className="flex max-h-screen w-full flex-col items-center p-4 text-white">
+    <div className="flex max-h-[90vh] w-full flex-col items-center p-4 text-white">
       <ScrollArea className="w-full">
         {projects.map((project) => (
           <Card key={project.id} className="mb-4 shadow-lg">
