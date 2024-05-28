@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { useAuth } from '../auth-context'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface UserData {
   connections: string[]
@@ -19,23 +20,19 @@ interface Recommendation {
 
 const FriendRecommendations: React.FC = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
+  const [loading, setLoading] = useState(true)
   const { session } = useAuth()
   const user = session?.user
 
   useEffect(() => {
     const fetchUserData = async (userId: string): Promise<UserData> => {
       const { data: connectionsData } = await supabase.from('connections').select('friend_id').eq('user_id', userId)
-
       const { data: projectData } = await supabase.from('projects').select('id').eq('user_id', userId)
-
       const projectIds = projectData ? projectData.map((project: { id: any }) => project.id) : []
-
       const { data: tagsData } = await supabase.from('have_tags').select('tags_id').in('project_id', projectIds)
-
       const connections = connectionsData ? connectionsData.map((conn: { friend_id: any }) => conn.friend_id) : []
       const projectTags = tagsData ? tagsData.map((tag: { tags_id: any }) => tag.tags_id) : []
 
-      // Fetch tags of connected users
       const connectedUsersTags: string[] = []
       for (const connectionId of connections) {
         const { data: connectedProjectData } = await supabase.from('projects').select('id').eq('user_id', connectionId)
@@ -54,11 +51,11 @@ const FriendRecommendations: React.FC = () => {
     }
 
     const calculateCommonConnections = (userConnections: string[], otherConnections: string[]): number => {
-      return userConnections.filter((conn) => otherConnections.includes(conn)).length // Return number of connection in common
+      return userConnections.filter((conn) => otherConnections.includes(conn)).length
     }
 
     const calculateCommonProjectTags = (userTags: string[], otherTags: string[]): number => {
-      return userTags.filter((tag) => otherTags.includes(tag)).length // Return number of tags in common
+      return userTags.filter((tag) => otherTags.includes(tag)).length
     }
 
     const calculateRecommendationScore = (
@@ -70,21 +67,12 @@ const FriendRecommendations: React.FC = () => {
       otherConnectedTags: string[]
     ): number => {
       const commonConnections = calculateCommonConnections(userConnections, otherConnections)
-      const commonProjectTags = calculateCommonProjectTags(userProjectTags, otherProjectTags) // Return number of tags in common
-      const commonConnectedTags = calculateCommonProjectTags(userConnectedTags, otherConnectedTags) // Return number of direct friends tags in common with users
+      const commonProjectTags = calculateCommonProjectTags(userProjectTags, otherProjectTags)
+      const commonConnectedTags = calculateCommonProjectTags(userConnectedTags, otherConnectedTags)
 
       const connectionWeight = 0.5
       const tagWeight = 0.3
       const connectedTagWeight = 0.2
-
-      console.log({
-        connectionWeight,
-        commonConnections,
-        tagWeight,
-        commonProjectTags,
-        connectedTagWeight,
-        commonConnectedTags,
-      })
 
       return (
         connectionWeight * commonConnections + tagWeight * commonProjectTags + connectedTagWeight * commonConnectedTags
@@ -99,13 +87,8 @@ const FriendRecommendations: React.FC = () => {
           projectTags: userProjectTags,
           connectedUsersTags: userConnectedTags,
         } = await fetchUserData(currentUser)
-        console.log({
-          connections: userConnections,
-          projectTags: userProjectTags,
-          connectedUsersTags: userConnectedTags,
-        })
+
         const { data: allUsers } = await supabase.from('users2').select('*')
-        console.log(allUsers)
         if (!allUsers) return
 
         const recommendations: Recommendation[] = []
@@ -132,6 +115,7 @@ const FriendRecommendations: React.FC = () => {
         recommendations.sort((a, b) => b.score - a.score)
         setRecommendations(recommendations.slice(0, 10))
       }
+      setLoading(false)
     }
 
     generateFriendRecommendations()
@@ -147,7 +131,6 @@ const FriendRecommendations: React.FC = () => {
         console.log('Successfully connected to user:', friendId)
         const index = recommendations.findIndex((recommendation) => recommendation.userId === friendId)
         if (index !== -1) {
-          // Remove the recommendation from the list
           const updatedRecommendations = [...recommendations]
           updatedRecommendations.splice(index, 1)
           setRecommendations(updatedRecommendations)
@@ -164,23 +147,52 @@ const FriendRecommendations: React.FC = () => {
       className="w-full"
     >
       <CarouselContent>
-        {recommendations.map((recommendation, index) => (
-          <CarouselItem key={index} className={`${recommendations.length > 3 ? 'md:basis-1/2 lg:basis-1/3' : ''}`}>
+        {loading ? (
+          <CarouselItem>
+            <div>
+              <div className="flex items-center space-x-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </div>
+            </div>
+          </CarouselItem>
+        ) : recommendations.length === 0 ? (
+          <CarouselItem>
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle>{recommendation.username}</CardTitle>
+                  <CardTitle>
+                    <p>No friend recommendation</p>
+                  </CardTitle>
+                  <CardContent>
+                    <p>You have no friend recommendation, probably because you already now everyone !</p>
+                  </CardContent>
                 </CardHeader>
-                <CardContent>
-                  <p>Score: {recommendation.score}</p>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button onClick={() => handleConnect(recommendation.userId)}>Se connecter</Button>
-                </CardFooter>
               </Card>
             </div>
           </CarouselItem>
-        ))}
+        ) : (
+          recommendations.map((recommendation, index) => (
+            <CarouselItem key={index} className={`${recommendations.length > 3 ? 'md:basis-1/2 lg:basis-1/3' : ''}`}>
+              <div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{recommendation.username}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Score: {recommendation.score}</p>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button onClick={() => handleConnect(recommendation.userId)}>Se connecter</Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            </CarouselItem>
+          ))
+        )}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />
