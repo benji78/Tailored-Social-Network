@@ -33,7 +33,7 @@ export default function Login() {
       console.error('Login Failed:', error)
     } else {
       // console.log(await supabase.from('users').select().eq('auth_id', data.user?.id))
-      navigate('/profile')
+      navigate('/')
     }
   }
 

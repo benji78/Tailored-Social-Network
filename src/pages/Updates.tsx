@@ -162,9 +162,9 @@ const Updates: React.FC = () => {
                 <div className="flex p-4">
                   <div className="w-full pl-4">
                     <CardHeader className="flex justify-between p-0">
-                      <div className="flex items-center">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full text-white">
-                          {getInitials(update.username)}
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary">
+                          {getInitials(update.project_title)}
                         </div>
                         <div>
                           <CardTitle className="text-lg font-bold text-primary">
