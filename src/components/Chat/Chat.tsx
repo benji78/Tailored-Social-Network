@@ -1,10 +1,9 @@
-// src/components/Chat.tsx
-import React, { useState, useEffect } from 'react'
-import { Message, User } from '../../types/Types'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import ChatMessage from '../ChatMessage/ChatMessage'
-import { useAuth } from '../auth-context'
+import { useEffect, useState } from 'react'
+import { Message, User } from '@/types/Types'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import ChatMessage from '@/components/ChatMessage/ChatMessage'
+import { useAuth } from '@/components/auth-context'
 import supabase from '@/lib/supabase'
 
 interface ChatProps {
@@ -17,7 +16,7 @@ const Chat: React.FC<ChatProps> = ({ otherUser }) => {
   const [newMessage, setNewMessage] = useState('')
 
   useEffect(() => {
-    fetchMessages()
+    void fetchMessages()
 
     const channel = supabase
       .channel('messages')
@@ -37,7 +36,7 @@ const Chat: React.FC<ChatProps> = ({ otherUser }) => {
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      void supabase.removeChannel(channel)
     }
   }, [session?.user?.id, otherUser.id])
 
@@ -64,20 +63,7 @@ const Chat: React.FC<ChatProps> = ({ otherUser }) => {
         },
       ])
 
-      if (error) {
-        console.error(error)
-      } else {
-        const { error: notificationError } = await supabase.from('notifications').insert([
-          {
-            user_id: otherUser.auth_id,
-            content: `New message from ${session.user.email}: ${newMessage.trim()}`,
-            is_read: false,
-          },
-        ])
-
-        if (notificationError) console.error(notificationError)
-      }
-
+      if (error) console.error(error)
       setNewMessage('')
     }
   }
@@ -109,11 +95,11 @@ const Chat: React.FC<ChatProps> = ({ otherUser }) => {
         <Input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
           type="text"
           placeholder="Type your message"
         />
-        <Button onClick={sendMessage} type="submit">
+        <Button onClick={() => sendMessage} type="submit">
           Send
         </Button>
       </div>

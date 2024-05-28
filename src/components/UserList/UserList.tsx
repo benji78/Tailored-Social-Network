@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { User } from '../../types/Types'
+import { User } from '@/types/Types.ts'
 import { Combobox } from '@/components/ComboBox/ComboBox'
-import { useAuth } from '../auth-context'
+import { useAuth } from '@/components/auth-context'
 import supabase from '@/lib/supabase'
 
 interface UserListProps {
@@ -14,7 +14,7 @@ const UserList: React.FC<UserListProps> = ({ onSelectUser }) => {
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
-    fetchUsers()
+    void fetchUsers()
   }, [])
 
   const fetchUsers = async () => {

@@ -1,5 +1,4 @@
-import React from 'react'
-import FriendRecommendations from '../components/FriendRecommendations/FriendRecommendations'
+import FriendRecommendations from '@/components/FriendRecommendations/FriendRecommendations'
 
 const FriendRecommendationsPage: React.FC = () => {
   return (
