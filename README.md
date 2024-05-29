@@ -6,23 +6,26 @@ This TSN platform is composed of a React frontend and a Supabase backend. The fr
 
 ## Features
 
-[//]: # 'The TSN platform can take into consideration, and not limited to, the following features:'
-[//]: # 'Graph-Based Networking: Implement a graph-based data structure to represent user connections, interests ... and relationships,'
-[//]: # 'Recommendation: Develop an intelligent recommendation procedure based on user interactions, interests ... and preferences,'
-[//]: # 'Privacy Controls: Provide users with fine-grained privacy settings to control the visibility of their posts and personal information,'
-[//]: # 'Customizable User Profiles: Allow users to create rich, customizable profiles with multimedia content and detailed information,'
-[//]: # 'Intuitive User Interface: Design an intuitive user interface for seamless navigation and interaction,'
-[//]: # 'Messaging and Notifications: Implement real-time messaging and notification features to keep users updated on their network activities,'
-[//]: # 'Content Sharing and Collaboration: Enable users to share various types of content (text, images, videos) and collaborate on projects or events,'
+[//]: # (The TSN platform can take into consideration, and not limited to, the following features:)
+[//]: # (Graph-Based Networking: Implement a graph-based data structure to represent user connections, interests ... and relationships,)
+[//]: # (Recommendation: Develop an intelligent recommendation procedure based on user interactions, interests ... and preferences,)
+[//]: # (Privacy Controls: Provide users with fine-grained privacy settings to control the visibility of their posts and personal information,)
+[//]: # (Customizable User Profiles: Allow users to create rich, customizable profiles with multimedia content and detailed information,)
+[//]: # (Intuitive User Interface: Design an intuitive user interface for seamless navigation and interaction,)
+[//]: # (Messaging and Notifications: Implement real-time messaging and notification features to keep users updated on their network activities,)
+[//]: # (Content Sharing and Collaboration: Enable users to share various types of content &#40;text, images, videos&#41; and collaborate on projects or events,)
 
 - **Authentication**: Users can use the app anonymously or sign up and log in
 - **Connections**: Users can connect with other users
 - **Projects**: Users can create and share projects
-- **Updates**: Users can create and share updates on projects
+- **Updates**: Users can create and share updates on their projects
+- **Recommendations**: Users get recommended other users based on their interests and closeness to other users
+[//]: # (- **Comments**: Users can comment on posts)
+[//]: # (- **Likes**: Users can like posts)
+[//]: # (- **Search**: Users can search for other users)
 - **Messaging**: Users can send messages to other users in real-time
 - **Notifications**: Users can receive notifications
-- **Recommendations**: Users can receive recommendations
-- **Graph**: Users can see the graph of the network
+- **Graph modeling**: Users can view their connections and interests in a graph structure
 
 ## Install dependencies
 

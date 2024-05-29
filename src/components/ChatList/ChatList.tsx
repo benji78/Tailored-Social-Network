@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { User } from '../../types/Types'
-import { Button } from '../ui/button'
-import { useAuth } from '../auth-context'
+import { useEffect, useState } from 'react'
+import { User } from '@/types/Types'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/components/auth-context'
 import supabase from '@/lib/supabase'
 
 interface ChatListProps {

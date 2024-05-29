@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import supabase from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/components/auth-context'
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Bell } from 'lucide-react'
 
 interface Notification {
   id: number
@@ -68,7 +69,9 @@ const Notifications: React.FC = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="secondary">Notifications ({notifications.length})</Button>
+        <Button variant="secondary" className="text-md">
+          <Bell className="me-2 h-5 w-5" />({notifications.length})
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-64">
         {notifications.length === 0 ? (

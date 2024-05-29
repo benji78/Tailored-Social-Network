@@ -1,4 +1,3 @@
-import React from 'react'
 import Graph from './graph/Graph'
 
 const App: React.FC = () => {

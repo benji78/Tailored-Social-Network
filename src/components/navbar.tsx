@@ -12,9 +12,9 @@ import {
   Home,
   LogIn,
   Menu,
+  MessageCircle,
   User2,
   UserPlus2,
-  MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '@/components/auth-context'
 import Notifications from './Notifications/Notifications'
@@ -61,12 +61,12 @@ export function Navbar() {
         if (error) {
           console.error('Error fetching username:', error)
         } else {
-          setUsername(data.username)
+          setUsername(data?.username)
         }
       }
     }
 
-    fetchUsername()
+    void fetchUsername()
   }, [session?.user?.id])
 
   return (
@@ -107,22 +107,26 @@ export function Navbar() {
               </nav>
             </S.SheetContent>
           </S.Sheet>
-          <div className="w-full flex-1">{}</div>
+          <div className="w-full flex-1"></div>
           <ModeToggle />
-          {session && <Notifications />}
-          <D.DropdownMenu>
-            <D.DropdownMenuTrigger asChild>
-              <Button className="rounded-full" size="icon" variant="secondary">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Afficher/cacher le menu utilisateur</span>
-              </Button>
-            </D.DropdownMenuTrigger>
-            <D.DropdownMenuContent align="end">
-              <D.DropdownMenuLabel>{username}</D.DropdownMenuLabel>
-              <D.DropdownMenuSeparator />
-              <D.DropdownMenuItem onClick={handleLogOut}>Log Out</D.DropdownMenuItem>
-            </D.DropdownMenuContent>
-          </D.DropdownMenu>
+          {session && (
+            <>
+              <Notifications />
+              <D.DropdownMenu>
+                <D.DropdownMenuTrigger asChild>
+                  <Button className="rounded-full" size="icon" variant="secondary">
+                    <CircleUser className="h-5 w-5" />
+                    <span className="sr-only">Afficher/cacher le menu utilisateur</span>
+                  </Button>
+                </D.DropdownMenuTrigger>
+                <D.DropdownMenuContent align="end">
+                  <D.DropdownMenuLabel>{username}</D.DropdownMenuLabel>
+                  <D.DropdownMenuSeparator />
+                  <D.DropdownMenuItem onClick={handleLogOut}>Log Out</D.DropdownMenuItem>
+                </D.DropdownMenuContent>
+              </D.DropdownMenu>
+            </>
+          )}
         </header>
         <Outlet /> {/* children */}
       </div>

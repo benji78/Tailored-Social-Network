@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -56,7 +56,7 @@ export default function Profile() {
 
   if (profile && !isEditing) {
     return (
-      <div className="flex min-h-screen w-full flex-col items-center bg-gray-100 p-4 dark:bg-gray-900">
+      <div className="flex h-screen w-full flex-col items-center overflow-scroll bg-gray-100 p-4 dark:bg-gray-900">
         <Card className="w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg dark:bg-gray-800">
           <div className="flex">
             <div className="w-1/3 bg-primary p-4 text-primary-foreground">

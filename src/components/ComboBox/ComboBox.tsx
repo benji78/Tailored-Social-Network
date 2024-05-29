@@ -1,12 +1,9 @@
-'use client'
-
-import * as React from 'react'
-import { Check, ChevronsUpDown } from 'lucide-react'
-
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { User } from '../../types/Types'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { User } from '@/types/Types'
 
 interface ComboboxDemoProps {
   users: User[]
@@ -14,9 +11,9 @@ interface ComboboxDemoProps {
 }
 
 export function Combobox({ users, onSelectUser }: ComboboxDemoProps) {
-  const [open, setOpen] = React.useState(false)
-  const [selectedUser, setSelectedUser] = React.useState<User | null>(null)
-  const [searchTerm, setSearchTerm] = React.useState('')
+  const [open, setOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleSelectUser = (user: User) => {
     setSelectedUser(user)
@@ -29,7 +26,7 @@ export function Combobox({ users, onSelectUser }: ComboboxDemoProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
           {selectedUser ? selectedUser.username : 'Start chatting...'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>

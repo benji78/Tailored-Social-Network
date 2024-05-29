@@ -1,9 +1,9 @@
 // src/pages/ChatPage.tsx
-import React, { useState } from 'react'
-import UserList from '../components/UserList/UserList'
-import ChatList from '../components/ChatList/ChatList'
-import Chat from '../components/Chat/Chat'
-import { User } from '../types/Types'
+import { useState } from 'react'
+import UserList from '@/components/UserList/UserList'
+import ChatList from '@/components/ChatList/ChatList'
+import Chat from '@/components/Chat/Chat'
+import { User } from '@/types/Types.ts'
 
 const ChatPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
